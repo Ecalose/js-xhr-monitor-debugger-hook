@@ -1,0 +1,24 @@
+{
+  "name": "js-xhr-monitor-debugger-hook",
+  "version": "0.1.0",
+  "description": "XHR相关的一些Hook，用于辅助提高XHR类型的加密的逆向效率",
+  "main": "index.js",
+  "repository": "https://github.com/JSREI/js-xhr-monitor-debugger-hook",
+  "namespace": "https://github.com/JSREI/js-xhr-monitor-debugger-hook",
+  "document": "https://github.com/JSREI/js-xhr-monitor-debugger-hook",
+  "scripts": {
+    "build": "webpack --config webpack.prod.js",
+    "watch": "webpack --watch --config webpack.dev.js"
+  },
+  "author": "CC11001100",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^22.13.1",
+    "@types/webpack": "^5.28.5",
+    "ts-loader": "^9.5.2",
+    "typescript": "^5.7.3",
+    "webpack": "^5.88.2",
+    "webpack-cli": "^5.1.4",
+    "webpack-merge": "^5.9.0"
+  }
+} 
