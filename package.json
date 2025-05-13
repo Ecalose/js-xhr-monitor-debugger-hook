@@ -1,24 +1,30 @@
 {
-  "name": "js-xhr-monitor-debugger-hook",
-  "version": "0.1.0",
-  "description": "XHR相关的一些Hook，用于辅助提高XHR类型的加密的逆向效率",
-  "main": "index.js",
-  "repository": "https://github.com/JSREI/js-xhr-monitor-debugger-hook",
-  "namespace": "https://github.com/JSREI/js-xhr-monitor-debugger-hook",
-  "document": "https://github.com/JSREI/js-xhr-monitor-debugger-hook",
+  "name": "js-xhr-hook",
+  "version": "0.4",
+  "description": "this is userscript's description",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "repository": "https://github.com/JSREI/js-xhr-hook",
+  "namespace": "https://github.com/JSREI/js-xhr-hook",
+  "document": "https://github.com/JSREI/js-xhr-hook",
   "scripts": {
-    "build": "webpack --config webpack.prod.js",
-    "watch": "webpack --watch --config webpack.dev.js"
+    "build": "NODE_ENV=production webpack --config webpack.prod.js",
+    "watch": "webpack --watch --config webpack.dev.js",
+    "type-check": "tsc --noEmit",
+    "type-check:watch": "tsc --noEmit --watch"
   },
-  "author": "CC11001100",
+  "author": "CC11001100 <CC11001100@qq.com>",
   "license": "MIT",
   "devDependencies": {
-    "@types/node": "^22.13.1",
-    "@types/webpack": "^5.28.5",
-    "ts-loader": "^9.5.2",
-    "typescript": "^5.7.3",
+    "@types/node": "^20.11.16",
+    "current-script-polyfill": "^1.0.0",
+    "ts-loader": "^9.5.1",
+    "typescript": "^5.3.3",
     "webpack": "^5.88.2",
     "webpack-cli": "^5.1.4",
     "webpack-merge": "^5.9.0"
+  },
+  "dependencies": {
+    "pako": "^2.1.0"
   }
-} 
+}

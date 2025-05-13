@@ -1,34 +1,109 @@
-# XHR Hook
+# XHR Monitor Debugger Hook
 
-# 还未开发完，只是public喽一眼，请勿期待随时烂尾。。。
+一个用于监控和调试 XMLHttpRequest 请求的 TypeScript 库。
 
-- 设置请求头断点 
-    - 
-- before response断点
-    在响应后直接定位到xhr请求的响应体，这样就不需要吭哧吭哧
-- 请求头断点（不推荐）
-    - 与chrome提供的xhr断点功能重复，因此不推荐使用此功能
-``
-- 反xhr拦截器统一设置请求加密参数 
-有些网站会拦截每个xhr请求，统一为请求加上加密参数，
-  因为你不知道
-  
-- 阿斯顿阿斯顿
-  
+## 特性
 
-对于比较新的fetch api也归入xhr类别（反正Chrome就是这么分的），
-不再单独划分出一个脚本。
+- 监控所有 XMLHttpRequest 请求
+- 支持请求 URL 过滤
+- 支持请求参数过滤
+- 支持请求头过滤
+- 提供完整的请求上下文信息
+- 支持动态配置更新
+- 使用 TypeScript 编写，提供完整的类型定义
 
+## 安装
 
+```bash
+npm install xhr-monitor-debugger-hook
+```
 
+## 使用方法
 
+### 基本用法
 
-    
-本脚本的定位就是帮助爬虫开发人员提高效率节省头发。
+```typescript
+import { defaultDebugger } from 'xhr-monitor-debugger-hook';
 
+// 启动调试器
+defaultDebugger.start();
 
+// 发送请求
+const xhr = new XMLHttpRequest();
+xhr.open('GET', 'https://api.example.com/data');
+xhr.send();
 
-本人在构思此脚本时通读了以下开源项目的源码，感谢大佬们愿意开源：
-- [https://github.com/wendux/Ajax-hook/blob/master/src/main.js](https://github.com/wendux/Ajax-hook/blob/master/src/xhr-hook.js)
+// 停止调试器
+defaultDebugger.stop();
+```
 
+### 自定义配置
 
+```typescript
+import { XhrDebugger, IXhrDebuggerConfig } from 'xhr-monitor-debugger-hook';
+
+const config: IXhrDebuggerConfig = {
+    enable: true,
+    enableRequestUrlFilter: true,
+    requestUrlFilterCondition: 'api.example.com',
+    enableRequestParamFilter: false,
+    requestParamFilterCondition: '',
+    enableRequestHeaderFilter: false,
+    requestHeaderFilterCondition: ''
+};
+
+const debugger = new XhrDebugger(config);
+debugger.start();
+```
+
+### 更新配置
+
+```typescript
+debugger.updateConfig({
+    enableRequestUrlFilter: true,
+    requestUrlFilterCondition: 'api.example.com'
+});
+```
+
+### 获取请求上下文
+
+```typescript
+const context = debugger.getContext();
+console.log(context.toString());
+```
+
+## API 文档
+
+### XhrDebugger
+
+主要的调试器类。
+
+#### 方法
+
+- `start()`: 启动调试器
+- `stop()`: 停止调试器
+- `updateConfig(config: Partial<IXhrDebuggerConfig>)`: 更新配置
+- `getConfig()`: 获取当前配置
+- `getContext()`: 获取当前上下文
+
+### IXhrDebuggerConfig
+
+调试器配置接口。
+
+#### 属性
+
+- `enable`: 是否启用调试器
+- `enableRequestUrlFilter`: 是否启用请求 URL 过滤
+- `requestUrlFilterCondition`: 请求 URL 过滤条件
+- `enableRequestParamFilter`: 是否启用请求参数过滤
+- `requestParamFilterCondition`: 请求参数过滤条件
+- `enableRequestHeaderFilter`: 是否启用请求头过滤
+- `requestHeaderFilterCondition`: 请求头过滤条件
+
+## 示例
+
+查看 [example.ts](src/example.ts) 获取更多使用示例。
+
+## 许可证
+
+MIT 
