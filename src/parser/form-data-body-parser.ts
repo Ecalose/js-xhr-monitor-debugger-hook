@@ -1,30 +1,26 @@
 import { BodyContext } from '../context/body-context';
-import { ParamContext } from '../context/param-context';
-import { Param } from '../context/param';
+import { ContentType } from '../context/content-type';
+import { ContextLocation } from '../context/context-location';
 
 /**
- * FormData数据解析器
+ * FormData 类型的请求体解析器
  */
 export class FormDataBodyParser {
     /**
-     * 解析FormData数据
-     * @param data FormData对象
-     * @returns {BodyContext} 解析后的上下文
+     * 解析 FormData 类型的请求体
+     * @param formData {FormData} FormData 对象
+     * @returns {BodyContext} 解析后的请求体上下文
      */
-    parse(data: FormData): BodyContext {
+    parse(formData: FormData): BodyContext {
         const bodyContext = new BodyContext();
-        const paramContext = new ParamContext();
-        
-        // 遍历FormData中的所有字段
-        data.forEach((value, key) => {
-            const param = new Param();
-            param.name = key;
-            param.value = value instanceof File ? value : String(value);
-            paramContext.add(param);
+        bodyContext.rawBody = formData;
+        bodyContext.contentType = ContentType.FORM;
+        bodyContext.location = ContextLocation.REQUEST;
+
+        formData.forEach((value, name) => {
+            bodyContext.addParam(name, value instanceof File ? value.name : String(value));
         });
-        
-        bodyContext.rawBody = data;
-        bodyContext.paramContext = paramContext;
+
         return bodyContext;
     }
 } 

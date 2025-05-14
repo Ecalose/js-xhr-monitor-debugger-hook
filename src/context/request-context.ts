@@ -5,6 +5,7 @@ import { AuthContext } from './auth-context';
 import { EventContext } from './event-context';
 import { Header } from './header';
 import { Param } from './param';
+import { ParamContext } from './param-context';
 
 /**
  * 表示一个请求上下文
@@ -33,6 +34,12 @@ class RequestContext {
     // 请求的请求头上下文
     headerContext: HeaderContext;
 
+    // 请求参数上下文
+    paramContext: ParamContext;
+
+    // 覆盖的MIME类型
+    overrideMimeType: string | null;
+
     constructor() {
         this.method = null;
         this.readyState = XMLHttpRequest.UNSENT;
@@ -43,6 +50,8 @@ class RequestContext {
         this.urlContext = new UrlContext();
         this.bodyContext = new BodyContext();
         this.headerContext = new HeaderContext();
+        this.paramContext = new ParamContext();
+        this.overrideMimeType = null;
     }
 
     /**

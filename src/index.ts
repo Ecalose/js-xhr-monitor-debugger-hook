@@ -1,8 +1,8 @@
 import { init } from './init/init';
-import { XhrDebugger } from './core/xhr-debugger';
+import { Debugger, DebuggerConfig } from './debuggers/debugger';
 
 // 默认的配置
-const defaultConfig = {
+const defaultConfig: DebuggerConfig = {
     // 是否启用调试器
     enable: true,
 
@@ -53,14 +53,14 @@ const defaultConfig = {
 };
 
 // 创建默认的调试器实例
-export const defaultDebugger = new XhrDebugger(defaultConfig);
+export const defaultDebugger = new Debugger(defaultConfig);
 
 // 导出所有需要的类和函数
-export { XhrDebugger } from './core/xhr-debugger';
-export { XMLHttpRequestContext } from './context/xhr-context';
+export { Debugger, DebuggerConfig } from './debuggers/debugger';
+export { XhrContext } from './context/xhr-context';
 export { XMLHttpRequestPrototypeHook } from './hook/xhr/xml-http-request-prototype-hook';
 export { XMLHttpRequestObjectHook } from './hook/xhr/xml-http-request-object-hook';
-export { IDGenerator } from './core/id-generator';
+export { IDGenerator } from './debuggers/id-generator';
 
 // 初始化
 (async () => {

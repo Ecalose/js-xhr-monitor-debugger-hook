@@ -1,35 +1,41 @@
 import { UrlContext } from './url-context';
 import { BodyContext } from './body-context';
 import { HeaderContext } from './header-context';
-import { ContentType } from './content-type';
 
 /**
- * 响应上下文
+ * 表示一个响应上下文
  */
 export class ResponseContext {
-    statusCode: number | null;
-    urlContext: UrlContext;
-    bodyContext: BodyContext;
-    headerContext: HeaderContext;
-
-    constructor() {
-        // 响应状态码
-        this.statusCode = null;
-
-        // 可能会有重定向之类的？
-        this.urlContext = new UrlContext();
-
-        // 请求携带的请求体
-        this.bodyContext = new BodyContext();
-
-        // 请求的请求头上下文
-        this.headerContext = new HeaderContext();
-    }
+    /**
+     * 响应状态码
+     */
+    statusCode: number = 0;
 
     /**
-     * 判断响应内容是否是JSON
+     * URL上下文
+     */
+    urlContext: UrlContext = new UrlContext();
+
+    /**
+     * 头部上下文
+     */
+    headerContext: HeaderContext = new HeaderContext();
+
+    /**
+     * 响应体上下文
+     */
+    bodyContext: BodyContext = new BodyContext();
+
+    /**
+     * 响应类型
+     */
+    responseType: XMLHttpRequestResponseType = '';
+
+    /**
+     * 判断响应是否是JSON
      */
     isJson(): boolean {
-        return this.bodyContext.contentType === ContentType.JSON;
+        const contentType = this.headerContext.getByName('content-type');
+        return contentType?.value?.toLowerCase().includes('application/json') || false;
     }
 } 

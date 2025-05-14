@@ -1,23 +1,22 @@
 /**
  * 表示参数的类型
  */
-enum ParamType {
+export const ParamType = {
     // 未知，暂不支持的参数类型
-    UNKNOWN = "UNKNOWN",
+    UNKNOWN: "UNKNOWN",
 
     // 表单参数
-    FORM = "FORM",
+    FORM: "FORM",
 
     // 从query string中提取出来的参数
-    QUERY_STRING = "QUERY_STRING",
+    QUERY_STRING: "QUERY_STRING",
 
     // JSON类型的参数
-    JSON = "JSON",
+    JSON: "JSON",
 
     // XML参数
-    XML = "XML"
-}
+    XML: "XML",
 
-export {
-    ParamType
-}; 
+    // URL参数
+    URL: "URL"
+} as const; 

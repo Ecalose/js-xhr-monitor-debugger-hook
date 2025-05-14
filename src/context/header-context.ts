@@ -11,7 +11,7 @@ export class HeaderContext {
     protected headers: Header[];
 
     // ContextLocation，用于表明是请求头还是响应头的上下文
-    location: ContextLocation;
+    location: symbol;
 
     constructor() {
         this.location = ContextLocation.UNKNOWN;
@@ -39,7 +39,7 @@ export class HeaderContext {
      */
     getByName(name: string): Header | null {
         name = name.toLowerCase();
-        for (let header of this.headers) {
+        for (const header of this.headers) {
             if (header.name?.toLowerCase() === name) {
                 return header;
             }

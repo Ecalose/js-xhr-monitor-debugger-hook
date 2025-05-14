@@ -4,6 +4,10 @@ import { Param } from "./param";
 import { ParamType } from "./param-type";
 import { ParamContext } from './param-context';
 
+interface JsonData {
+    [key: string]: unknown;
+}
+
 /**
  * 表示一个请求体或者响应体
  */
@@ -14,14 +18,19 @@ export class BodyContext {
     rawBody: string | Blob | ArrayBuffer | FormData | URLSearchParams | null = null;
 
     /**
+     * 原始数据的文本形式
+     */
+    rawBodyText: string | null = null;
+
+    /**
      * 上下文位置（请求/响应）
      */
-    location: ContextLocation = ContextLocation.REQUEST;
+    location: symbol = ContextLocation.REQUEST;
 
     /**
      * 内容类型
      */
-    contentType: ContentType = ContentType.PLAINTEXT;
+    contentType: typeof ContentType[keyof typeof ContentType] = ContentType.PLAINTEXT;
 
     /**
      * 参数上下文
@@ -31,7 +40,12 @@ export class BodyContext {
     /**
      * JSON数据
      */
-    jsonData: any = null;
+    jsonData: JsonData | null = null;
+
+    /**
+     * XML内容
+     */
+    xmlContent: Document | null = null;
 
     /**
      * 文本内容
@@ -47,6 +61,11 @@ export class BodyContext {
      * ArrayBuffer数据
      */
     arrayBufferData: ArrayBuffer | null = null;
+
+    /**
+     * 对象形式的数据
+     */
+    object: Record<string, unknown> = {};
 
     // 如果是请求体的话，则在此处携带请求体里的参数
     params: Param[] = [];

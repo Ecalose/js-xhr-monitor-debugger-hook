@@ -27,7 +27,7 @@ interface GMXMLHttpRequestDetails {
     headers: Record<string, string>;
     data: string;
     onload: (response: { status: number; responseText: string }) => void;
-    onerror: (error: any) => void;
+    onerror: (error: Error) => void;
 }
 
 declare function GM_xmlhttpRequest(details: GMXMLHttpRequestDetails): void;
@@ -56,15 +56,15 @@ function callDeepSeekAPI(prompt: string): Promise<string> {
                     try {
                         const data: DeepSeekResponse = JSON.parse(response.responseText);
                         resolve(data.choices[0].message.content);
-                    } catch (e) {
+                    } catch (_e) {
                         reject('解析响应失败');
                     }
                 } else {
                     reject(`API 请求失败，状态码：${response.status}`);
                 }
             },
-            onerror: function (error) {
-                reject(`请求错误：${error}`);
+            onerror: function (error: Error) {
+                reject(`请求错误：${error.message}`);
             }
         });
     });

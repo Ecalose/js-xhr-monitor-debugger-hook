@@ -1,29 +1,28 @@
 /**
  * 表示内容的类型
  */
-enum ContentType {
+export const ContentType = {
     // 未知
-    UNKNOWN = "UNKNOWN",
+    UNKNOWN: { value: "UNKNOWN", description: "未知类型" },
 
     // 纯文本字符串
-    PLAINTEXT = "PLAINTEXT",
+    PLAINTEXT: { value: "PLAINTEXT", description: "纯文本" },
 
     // JSON字符串
-    JSON = "JSON",
+    JSON: { value: "JSON", description: "JSON" },
 
     // XML格式
-    XML = "XML",
+    XML: { value: "XML", description: "XML" },
 
     // 二进制
-    BINARY = "BINARY",
+    BINARY: { value: "BINARY", description: "二进制" },
 
     // 表单
-    FORM = "FORM",
+    FORM: { value: "FORM", description: "表单" },
 
-    // HTML
-    HTML = "HTML"
-}
+    // Blob
+    BLOB: { value: "BLOB", description: "Blob" },
 
-export {
-    ContentType
-};
+    // ArrayBuffer
+    ARRAYBUFFER: { value: "ARRAYBUFFER", description: "ArrayBuffer" }
+} as const;

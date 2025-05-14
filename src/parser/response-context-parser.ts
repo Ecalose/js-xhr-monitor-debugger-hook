@@ -1,46 +1,27 @@
 import { ResponseContext } from "../context/response-context";
-import { Header } from "../context/header";
-import { ContextLocation } from "../context/context-location";
-import { UrlContextParser } from "./url-context-parser";
 import { ResponseBodyParser } from "./response-body-parser";
-import { XhrContext } from "../context/xhr-context";
 
 /**
- * 解析响应
+ * 响应上下文解析器
  */
 export class ResponseContextParser {
+
     /**
-     * 解析 XHR 对象并填充 ResponseContext
-     * @param {XMLHttpRequest} xhrObject - XHR 对象
-     * @param {XhrContext} xhrContext - XHR 上下文
-     * @return {ResponseContext} - 填充后的 ResponseContext 对象
+     * 解析响应上下文
+     * @param xhrObject {XMLHttpRequest} XHR对象
+     * @returns {ResponseContext} 响应上下文
      */
-    parse(xhrObject: XMLHttpRequest, xhrContext: XhrContext): ResponseContext {
+    parse(xhrObject: XMLHttpRequest): ResponseContext {
         const responseContext = new ResponseContext();
 
         // 设置响应状态码
         responseContext.statusCode = xhrObject.status;
 
-        // URL
-        responseContext.urlContext = new UrlContextParser().parse(xhrObject.responseURL);
-
-        // 设置请求头上下文
-        const headers = xhrObject.getAllResponseHeaders();
-        if (headers) {
-            const headerLines = headers.trim().split(/[\r\n]+/);
-            headerLines.forEach(line => {
-                const [key, value] = line.split(": ");
-                const header = new Header();
-                header.location = ContextLocation.RESPONSE;
-                header.isCustom = false;
-                header.name = key;
-                header.value = value;
-                responseContext.headerContext.headers.push(header);
-            });
-        }
+        // 设置响应类型
+        responseContext.responseType = xhrObject.responseType;
 
         // 解析响应体
-        responseContext.bodyContext = new ResponseBodyParser().parse(xhrObject, xhrContext);
+        responseContext.bodyContext = new ResponseBodyParser().parse(xhrObject);
 
         return responseContext;
     }

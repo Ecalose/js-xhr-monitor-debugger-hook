@@ -26,17 +26,17 @@ export class SendMessage extends BaseMessage {
         console.groupEnd();
 
         console.groupCollapsed("%c📝 Headers", "color: #FF9800; font-size: 12px; font-weight: bold;");
-        console.table(requestContext.headerContext.headers.map(header => ({
+        console.table(requestContext.headerContext.getAll().map(header => ({
             "Name": header.name,
             "Value": header.value,
-            "Location": header.location.description,
+            "Location": header.location.toString(),
             "Is Custom": header.isCustom
         })));
         console.groupEnd();
 
         console.groupCollapsed("%c📦 Body Context", "color: #9C27B0; font-size: 12px; font-weight: bold;");
         console.table({
-            "Location": requestContext.bodyContext.location.description,
+            "Location": requestContext.bodyContext.location.toString(),
             "Content Type": requestContext.bodyContext.contentType.description,
             "Raw Body": requestContext.bodyContext.rawBody,
             "Raw Body Text": requestContext.bodyContext.rawBodyText,

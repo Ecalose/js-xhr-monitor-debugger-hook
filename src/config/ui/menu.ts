@@ -1,8 +1,16 @@
 /**
  * 注册油猴脚本菜单
  */
+interface VueAppOptions {
+    data?: () => AppState;
+    methods?: {
+        increment: (this: AppState) => void;
+    };
+    template?: string;
+}
+
 interface Vue {
-    createApp: (options: any) => {
+    createApp: (options: VueAppOptions) => {
         mount: (selector: string) => void;
     };
 }
@@ -19,7 +27,7 @@ declare function GM_xmlhttpRequest(details: {
     method: string;
     url: string;
     onload: (response: { responseText: string }) => void;
-    onerror: (error: any) => void;
+    onerror: (error: Error) => void;
 }): void;
 
 interface AppState {

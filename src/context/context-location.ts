@@ -1,17 +1,13 @@
 /**
  * 用于表示是在请求头还是在响应头里
  */
-enum ContextLocation {
+export const ContextLocation = {
     // 未知
-    UNKNOWN = "UNKNOWN",
+    UNKNOWN: Symbol('UNKNOWN'),
 
     // 在请求中
-    REQUEST = "REQUEST",
+    REQUEST: Symbol('REQUEST'),
 
     // 在响应中
-    RESPONSE = "RESPONSE"
-}
-
-export {
-    ContextLocation
-}; 
+    RESPONSE: Symbol('RESPONSE')
+} as const; 
