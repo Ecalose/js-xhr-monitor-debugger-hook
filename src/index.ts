@@ -1,5 +1,10 @@
 import { init } from './init/init';
 import { Debugger, DebuggerConfig } from './debuggers/debugger';
+import { initLogger } from './logger';
+import Logger from './logger/logger';
+
+// 初始化日志系统
+initLogger();
 
 // 默认的配置
 const defaultConfig: DebuggerConfig = {
@@ -61,8 +66,15 @@ export { XhrContext } from './context/xhr-context';
 export { XMLHttpRequestPrototypeHook } from './hook/xhr/xml-http-request-prototype-hook';
 export { XMLHttpRequestObjectHook } from './hook/xhr/xml-http-request-object-hook';
 export { IDGenerator } from './debuggers/id-generator';
+export { Logger } from './logger';
 
 // 初始化
 (async () => {
-    init();
+    try {
+        Logger.info('正在初始化 JS-XHR-HOOK...');
+        init();
+        Logger.info('JS-XHR-HOOK 初始化完成');
+    } catch (error) {
+        Logger.error('JS-XHR-HOOK 初始化失败:', error);
+    }
 })(); 
