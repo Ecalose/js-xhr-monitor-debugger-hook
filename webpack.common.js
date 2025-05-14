@@ -8,13 +8,15 @@ module.exports = {
         index: './src/index.ts'
     },
     output: {
-        filename: '[name].js',
         path: path.resolve(__dirname, 'dist'),
     },
     resolve: {
         extensions: ['.ts', '.js']
     },
-    optimization: {},
+    optimization: {
+        minimize: false,
+        concatenateModules: false
+    },
     plugins: [
         new webpack.BannerPlugin({
             entryOnly: true,

@@ -8,6 +8,20 @@ module.exports = merge(common, {
     // 1. 在油猴商店上架的脚本不允许混淆和压缩
     // 2. 不混淆不压缩保留注释能够稍微增加一点用户的信任度
     mode: "none",
+    output: {
+        filename: 'js-xhr-hook.user.js',
+        library: {
+            name: 'xhrMonitorDebuggerHook',
+            type: 'umd',
+            umdNamedDefine: true
+        }
+    },
+    optimization: {
+        minimize: false,
+        concatenateModules: false,
+        moduleIds: 'named',
+        chunkIds: 'named'
+    },
     externals: {
     }
 }); 
