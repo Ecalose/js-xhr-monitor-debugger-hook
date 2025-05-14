@@ -18,6 +18,9 @@ module.exports = {
         concatenateModules: false
     },
     plugins: [
+        new webpack.DefinePlugin({
+            __VERSION__: JSON.stringify(webpackPackageJson.version || '0.4')
+        }),
         new webpack.BannerPlugin({
             entryOnly: true,
             raw: true,

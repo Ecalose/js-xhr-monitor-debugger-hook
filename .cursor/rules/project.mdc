@@ -1,0 +1,7 @@
+---
+description: 项目背景 
+globs: *
+alwaysApply: false
+---
+# 项目背景 
+- 这是一个使用TypeScript开发的油猴扩展

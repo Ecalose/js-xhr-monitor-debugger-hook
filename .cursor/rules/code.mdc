@@ -1,0 +1,9 @@
+---
+description: 代码规范
+globs: *
+alwaysApply: false
+---
+- 你的代码应该尽量模块化，而不是把所有代码都堆在一个文件中
+- 当需要打印输出时，使用 src/logger 日志模块
+- 当需要存储时，使用 src/storage 存储模块 
+- 当需要调用AI时，使用 src/ai 模块
