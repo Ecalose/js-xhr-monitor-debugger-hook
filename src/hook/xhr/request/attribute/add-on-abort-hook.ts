@@ -8,17 +8,21 @@ import { XhrContext } from "../../../../context/xhr-context";
  *
  * @param xhrObject {XMLHttpRequest}
  * @param xhrContext {XhrContext}
- * @param eventCallbackFunction {Function | null}
- * @returns {Function}
+ * @param eventCallbackFunction {((this: XMLHttpRequest, ev: ProgressEvent) => any) | null}
+ * @returns {(this: XMLHttpRequest, ev: ProgressEvent) => any}
  */
-export function addOnabortHook(xhrObject: XMLHttpRequest, xhrContext: XhrContext, eventCallbackFunction: Function | null = null): Function {
-    return xhrObject.onabort = () => {
+export function addOnabortHook(
+    xhrObject: XMLHttpRequest, 
+    xhrContext: XhrContext, 
+    eventCallbackFunction: ((this: XMLHttpRequest, ev: ProgressEvent) => any) | null = null
+): (this: XMLHttpRequest, ev: ProgressEvent) => any {
+    return function(this: XMLHttpRequest, ev: ProgressEvent): any {
         // 检查上下文是否符合条件断点
         DebuggerTester.test(xhrContext);
 
         // 跟进去下面这个函数就是处理响应体的代码逻辑了
         if (eventCallbackFunction) {
-            return eventCallbackFunction.apply(xhrObject, arguments);
+            return eventCallbackFunction.call(this, ev);
         } else {
             return null;
         }
@@ -30,6 +34,22 @@ export function addOnabortHook(xhrObject: XMLHttpRequest, xhrContext: XhrContext
  * @param xhrObject {XMLHttpRequest}
  * @param xhrContext {XhrContext}
  */
-function collectInformation(xhrObject: XMLHttpRequest, xhrContext: XhrContext): void {
+function _collectInformation(_xhrObject: XMLHttpRequest, _xhrContext: XhrContext): void {
     // 暂时为空实现
+}
+
+/**
+ * 添加 onabort 钩子
+ * @param xhrObject {XMLHttpRequest} XHR对象
+ * @param xhrContext {XhrContext} XHR上下文
+ */
+export function addOnAbortHook(xhrObject: XMLHttpRequest, xhrContext: XhrContext): void {
+    const originalOnAbort = xhrObject.onabort;
+
+    xhrObject.onabort = function(this: XMLHttpRequest, ev: ProgressEvent): void {
+        // 调用原始的 onabort 处理函数
+        if (typeof originalOnAbort === 'function') {
+            originalOnAbort.call(this, ev);
+        }
+    };
 } 

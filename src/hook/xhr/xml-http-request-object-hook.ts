@@ -10,6 +10,9 @@ import { addAddEventListenerHook } from './request/method/add-add-event-listener
 import { addVisitResponsePropertyHook } from './response/attribute/add-visit-response-property-hook';
 import { addOnabortHook } from './request/attribute/add-on-abort-hook';
 
+// 默认的超时时间（毫秒）
+const DEFAULT_TIMEOUT = 30000;
+
 /**
  * 为XHR对象添加Hook
  */
@@ -17,6 +20,7 @@ export class XMLHttpRequestObjectHook {
 
     private xhrObject: XMLHttpRequest;
     private xhrContext: XhrContext;
+    private originalTimeout: number;
 
     /**
      *
@@ -25,6 +29,12 @@ export class XMLHttpRequestObjectHook {
     constructor(xhrObject: XMLHttpRequest) {
         this.xhrObject = xhrObject;
         this.xhrContext = new XhrContext();
+        this.originalTimeout = xhrObject.timeout;
+    }
+
+    private addOnreadystatechangeHook(value: EventListener): boolean {
+        addOnreadystatechangeHook(this.xhrObject, this.xhrContext, value);
+        return true;
     }
 
     /**
@@ -32,27 +42,21 @@ export class XMLHttpRequestObjectHook {
      * @return {XMLHttpRequest}
      */
     addHook(): XMLHttpRequest {
-        const _this = this;
         return new Proxy(this.xhrObject, {
-            get(target: XMLHttpRequest, p: string | symbol): any {
+            get: (target: XMLHttpRequest, p: string | symbol, receiver: unknown): unknown => {
                 switch (p) {
-
-                    // 请求相关的方法
-
                     case "open":
-                        return addOpenHook(_this.xhrObject, _this.xhrContext);
+                        return addOpenHook(this.xhrObject, this.xhrContext);
                     case "send":
-                        return addSendHook(_this.xhrObject, _this.xhrContext);
+                        return addSendHook(this.xhrObject, this.xhrContext);
                     case "setRequestHeader":
-                        return addSetRequestHeaderHook(_this.xhrObject, _this.xhrContext);
+                        return addSetRequestHeaderHook(this.xhrObject, this.xhrContext);
                     case "abort":
-                        return addAbortHook(_this.xhrObject, _this.xhrContext);
+                        return addAbortHook(this.xhrObject, this.xhrContext);
                     case "overrideMimeType":
-                        return addOverrideMimeTypeHook(_this.xhrObject, _this.xhrContext);
+                        return addOverrideMimeTypeHook(this.xhrObject, this.xhrContext);
 
                     // 请求相关的属性
-
-                    // 这几个属性就忽略不再拦截了
                     case "readyState":
                     case "timeout":
                     case "upload":
@@ -62,32 +66,27 @@ export class XMLHttpRequestObjectHook {
                     // 响应相关的方法
                     case "getAllResponseHeaders":
                     case "getResponseHeader":
-                        return addVisitResponseHeaderHook(_this.xhrObject, _this.xhrContext, p);
+                        return addVisitResponseHeaderHook(target, this.xhrContext, p);
                     // 响应相关的属性
                     case "response":
                     case "responseText":
                     case "responseType":
                     case "responseURL":
                     case "responseXML":
-                        return addVisitResponsePropertyHook(_this.xhrObject, _this.xhrContext, p);
+                        return addVisitResponsePropertyHook(target, this.xhrContext, p);
                     case "status":
                     case "statusText":
                         return target[p as keyof XMLHttpRequest];
-                    // 事件处理，搞一个专门的单元来处理，添加事件可以通过addEventListener
-                    // 也可以直接on+事件名称，所以要把两种情况都覆盖住
                     case "addEventListener":
-                        return addAddEventListenerHook(_this.xhrObject, _this.xhrContext);
-
+                        return addAddEventListenerHook(this.xhrObject, this.xhrContext);
                     default:
-                        // 其它情况就不拦截了，直接放行
                         return target[p as keyof XMLHttpRequest];
                 }
             },
-            set(target: XMLHttpRequest, p: string | symbol, value: any): boolean {
+            set: (target: XMLHttpRequest, p: string | symbol, value: unknown): boolean => {
                 switch (p) {
                     case "onabort":
-                        addOnabortHook(_this.xhrObject, _this.xhrContext);
-                        (target as any)[p] = value;
+                        addOnabortHook(this.xhrObject, this.xhrContext);
                         return true;
                     case "onerror":
                     case "onload":
@@ -95,19 +94,20 @@ export class XMLHttpRequestObjectHook {
                     case "onloadstart":
                     case "onprogress":
                     case "ontimeout":
-                        // TODO 2025-01-11 15:21:44 锁定超时时间，这样在断点长时间分析的时候不至于一直失败
-                        (target as any)[p] = value;
+                        if (p in target && typeof p === 'string') {
+                            ((target as unknown) as Record<string, EventListener>)[p] = value as EventListener;
+                        }
+                        return true;
+                    case "timeout":
+                        this.originalTimeout = value as number;
+                        target.timeout = DEFAULT_TIMEOUT;
                         return true;
                     case "onreadystatechange":
-                        addOnreadystatechangeHook(_this.xhrObject, _this.xhrContext, value);
-                        (target as any)[p] = value;
-                        return true;
-                    // case "withCredentials":
-                    //     // 设置携带凭证的时候拦截一下
-                    //     return _this.addWithCredentialsHook();
+                        return this.addOnreadystatechangeHook(value as EventListener);
                     default:
-                        // 默认情况下就直接赋值，不再尝试Hook
-                        (target as any)[p] = value;
+                        if (p in target && typeof p === 'string') {
+                            ((target as unknown) as Record<string, unknown>)[p] = value;
+                        }
                         return true;
                 }
             }

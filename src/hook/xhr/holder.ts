@@ -1,4 +1,4 @@
-import { getUnsafeWindow } from '../../utils/scope-util';
+import { getUnsafeWindow } from "../../utils/unsafe-window";
 
-// 持有一份最纯净的原型
-export const ancestorXMLHttpRequestHolder: typeof XMLHttpRequest = getUnsafeWindow().XMLHttpRequest; 
+// 保存原始的 XMLHttpRequest 对象
+export const ancestorXMLHttpRequestHolder: typeof XMLHttpRequest = ((getUnsafeWindow() as Window & typeof globalThis).XMLHttpRequest); 

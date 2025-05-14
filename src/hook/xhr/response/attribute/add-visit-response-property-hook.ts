@@ -8,12 +8,13 @@ type ResponseProperty = 'response' | 'responseText' | 'responseType' | 'response
  * @param xhr XMLHttpRequest实例
  * @param context XHR上下文
  * @param property 访问的属性名
+ * @returns {unknown} 属性值
  */
 export function addVisitResponsePropertyHook(
     xhr: XMLHttpRequest, 
     context: XhrContext, 
     property: ResponseProperty
-): any {
+): unknown {
     const value = xhr[property];
     
     // 只在请求完成时记录响应内容
@@ -32,7 +33,7 @@ export function addVisitResponsePropertyHook(
                     break;
                     
                 case 'responseType':
-                    context.responseContext.bodyContext.responseType = value as XMLHttpRequestResponseType;
+                    context.responseContext.responseType = value as XMLHttpRequestResponseType;
                     break;
                     
                 case 'responseURL':

@@ -20,18 +20,10 @@ export class XMLHttpRequestPrototypeHook {
                 if (!cachedProxyXHR) {
                     cachedProxyXHR = new Proxy(xMLHttpRequestHolder, {
                         // new XMLHttpRequest()的时候给替换掉返回的对象
-                        construct(target: typeof XMLHttpRequest, argArray: any[]): XMLHttpRequest {
+                        construct(_target: typeof XMLHttpRequest, _argArray: unknown[]): XMLHttpRequest {
                             const xhrObject = new xMLHttpRequestHolder();
                             return new XMLHttpRequestObjectHook(xhrObject).addHook();
-                        },
-                        // get(target, p, receiver) {
-                        //     return target[p];
-                        // },
-                        // getPrototypeOf(target) {
-                        //     // 应该如何Hook住对原型链的修改呢？
-                        //     // TODO 当访问原型的时候将其拦截住，因为有些拦截器是通用在原型上添加的
-                        //     debugger;
-                        // }
+                        }
                     });
                 }
                 return cachedProxyXHR;

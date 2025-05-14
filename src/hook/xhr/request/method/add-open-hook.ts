@@ -5,7 +5,7 @@ import { OpenMessage } from '../../../../message-formatter/request/method/open-m
 import { AuthContext } from '../../../../context/auth-context';
 
 type OpenMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'HEAD' | 'OPTIONS' | 'TRACE' | 'CONNECT' | 'PATCH';
-type OpenFunction = (method: string, url: string | URL, async?: boolean, username?: string | null, password?: string | null) => void;
+type OpenFunction = (method: string, url: string, async?: boolean, username?: string | null, password?: string | null) => void;
 
 /**
  * 为open添加代理，以便在访问的时候能够拦截得到
@@ -14,16 +14,15 @@ type OpenFunction = (method: string, url: string | URL, async?: boolean, usernam
  *
  * @param xhrObject {XMLHttpRequest}
  * @param xhrContext {XhrContext}
- * @returns {Proxy<Function>}
+ * @returns {void}
  */
-export function addOpenHook(xhrObject: XMLHttpRequest, xhrContext: XhrContext): OpenFunction {
-    return new Proxy(xhrObject.open, {
-        apply(target: OpenFunction, thisArg: any, argArray: any[]): void {
-            collectInformation(xhrObject, xhrContext, argArray);
+export function addOpenHook(xhrObject: XMLHttpRequest, xhrContext: XhrContext): void {
+    const originalOpen = xhrObject.open;
 
-            // TODO 2025-01-11 00:18:43 断点测试
-
-            return target.apply(xhrObject, argArray);
+    xhrObject.open = new Proxy(originalOpen, {
+        apply(target: OpenFunction, thisArg: unknown, [method, url, isAsync = true, username, password]: [string, string, boolean?, string?, string?]): void {
+            collectInformation(xhrObject, xhrContext, [method, url, isAsync, username, password]);
+            target.call(xhrObject, method, url, isAsync, username, password);
         }
     });
 }
@@ -35,11 +34,8 @@ export function addOpenHook(xhrObject: XMLHttpRequest, xhrContext: XhrContext): 
  * @param xhrContext
  * @param argArray
  */
-function collectInformation(xhrObject: XMLHttpRequest, xhrContext: XhrContext, argArray: any[]): void {
+function collectInformation(xhrObject: XMLHttpRequest, xhrContext: XhrContext, [method, url, isAsync = true, username, password]: [string, string, boolean?, string?, string?]): void {
     try {
-        // 从第三个参数开始是可选的
-        const [method, url, isAsync, username, password] = argArray;
-
         const formattedUrl = formatToUrl(url);
         new XhrContextParser().updateWithUrl(xhrContext, formattedUrl);
         const requestContext = xhrContext.requestContext;

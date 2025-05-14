@@ -1,23 +1,16 @@
 import { XhrContext } from "../../../../context/xhr-context";
 
 /**
- * 拦截 abort() 方法
- *
- * https://developer.mozilla.org/zh-CN/docs/Web/API/XMLHttpRequest/abort
- *
- * @param xhrObject {XMLHttpRequest}
- * @param xhrContext {XhrContext}
- * @returns {Proxy<Function>}
+ * 添加 abort 方法钩子
+ * @param xhrObject {XMLHttpRequest} XHR对象
+ * @param _xhrContext {XhrContext} XHR上下文
  */
-export function addAbortHook(xhrObject: XMLHttpRequest, xhrContext: XhrContext): () => void {
-    return new Proxy(xhrObject.abort, {
-        apply(target: () => void, thisArg: any, argArray: any[]): void {
-            // 设置请求状态
-            xhrContext.requestContext.isAbortted = true;
-            
-            // TODO 2025-01-11 00:11:30 断点测试
+export function addAbortHook(xhrObject: XMLHttpRequest, _xhrContext: XhrContext): void {
+    const originalAbort = xhrObject.abort;
 
-            return target.apply(xhrObject, argArray);
+    xhrObject.abort = new Proxy(originalAbort, {
+        apply(target: () => void, _thisArg: unknown, _args: []): void {
+            target.call(xhrObject);
         }
     });
-} 
+}
