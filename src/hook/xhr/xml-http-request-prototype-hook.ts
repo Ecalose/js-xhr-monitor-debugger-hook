@@ -1,6 +1,6 @@
 import { ancestorXMLHttpRequestHolder } from './holder';
 import { XMLHttpRequestObjectHook } from './xml-http-request-object-hook';
-import { getUnsafeWindow } from '../../utils/scope-util';
+import { getUnsafeWindow } from '../../utils/unsafe-window';
 
 interface UnsafeWindow extends Window {
     XMLHttpRequest: typeof XMLHttpRequest;
