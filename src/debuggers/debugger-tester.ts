@@ -5,10 +5,11 @@ import { XhrContext } from "../context/xhr-context";
  */
 export class DebuggerTester {
     /**
-     * 测试XHR脚本
-     * @param xhrScript XHR脚本内容
+     * 测试调试器
+     * @param xhrContext XHR上下文对象
      */
-    static test(xhrScript: string): void {
-        // TODO: 实现测试逻辑
+    static test(xhrContext: XhrContext): void {
+        // 在此处添加测试逻辑
+        console.log('Testing debugger with context:', xhrContext);
     }
 } 

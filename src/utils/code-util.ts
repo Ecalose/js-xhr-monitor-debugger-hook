@@ -1,18 +1,16 @@
 /**
- * 获取用户代码的位置信息
- * @returns {string} 代码位置信息
+ * 生成一个随机的函数名。
+ *
+ * @param length - 函数名的长度，默认为 8。
+ * @return 返回生成的随机函数名。
  */
-export function getUserCodeLocation(): string {
-    try {
-        const error = new Error();
-        const stackLines = error.stack?.split('\n') || [];
-        // 跳过前两行（Error对象和当前函数）
-        const userCodeLine = stackLines[2] || '';
-        return userCodeLine.trim();
-    } catch (e) {
-        console.error('Error getting code location:', e);
-        return 'Unknown location';
+export function generateRandomFunctionName(length: number = 8): string {
+    const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    let result = '';
+    for (let i = 0; i < length; i++) {
+        result += chars.charAt(Math.floor(Math.random() * chars.length));
     }
+    return result;
 }
 
 /**
@@ -70,21 +68,6 @@ export function getParameterNames(fn: Function): string[] {
     return paramNames;
 }
 
-/**
- * 生成一个随机的函数名。
- *
- * @param length - 函数名的长度，默认为 8。
- * @return 返回生成的随机函数名。
- */
-export function generateRandomFunctionName(length: number = 8): string {
-    const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    let result = '';
-    for (let i = 0; i < length; i++) {
-        result += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    return result;
-}
-
 const tampermonkeyChromeExtensionId = "dhdgffkkebhmkfjojejmpbldmpobfkfo";
 
 /**
@@ -109,4 +92,4 @@ export function getUserCodeLocation(): string | null {
         console.error('Error getting code location:', e);
         return null;
     }
-}
+} 

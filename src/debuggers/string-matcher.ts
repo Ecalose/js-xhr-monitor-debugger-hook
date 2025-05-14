@@ -22,7 +22,7 @@ export class StringMatcher {
      * @param s 要匹配的字符串
      * @returns {boolean} 是否匹配
      */
-    match(s: string): boolean {
+    match(_s: string): boolean {
         // TODO: 实现匹配逻辑
         return false;
     }
