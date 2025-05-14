@@ -1,66 +1,50 @@
 import { XhrContext } from "../../../context/xhr-context";
 import { SignContext } from "./sign-context";
-import { RequestContext } from "../../../context/request-context";
-import { ResponseContext } from "../../../context/response-context";
-import { Param } from "../../../context/param";
 
 /**
  * 签名分析器
  */
-class SignAnalyzer {
+export class SignAnalyzer {
 
     /**
-     * 分析XHR上下文中的签名
+     * 分析请求中的签名
      * @param xhrContext {XhrContext} XHR上下文
-     * @returns {SignContext | null} 如果找到签名参数则返回签名上下文，否则返回null
+     * @returns {SignContext | null} 签名上下文，如果没有找到签名则返回 null
      */
     analyze(xhrContext: XhrContext): SignContext | null {
-        const signParam = this.analyzeRequest(xhrContext.requestContext);
-        if (signParam && signParam.name && signParam.value) {
-            return new SignContext(signParam.name, signParam.value);
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * 分析请求上下文中的签名参数
-     * @param requestContext {RequestContext} 请求上下文
-     * @returns {Param | null} 如果找到签名参数则返回该参数，否则返回null
-     */
-    analyzeRequest(requestContext: RequestContext): Param | null {
-        for(let param of requestContext.getParams()) {
-            if (this.maybeSignName(param.name)) {
-                return param;
+        // 分析请求参数中的签名
+        for (const param of xhrContext.requestContext.getParams()) {
+            if (param.name && this.maybeSignName(param.name)) {
+                const signContext = new SignContext();
+                signContext.name = param.name;
+                signContext.value = param.value || '';
+                return signContext;
             }
         }
+
+        // 分析请求头中的签名
+        for (const header of xhrContext.requestContext.headerContext.getAll()) {
+            if (header.name && this.maybeSignName(header.name)) {
+                const signContext = new SignContext();
+                signContext.name = header.name;
+                signContext.value = header.value || '';
+                return signContext;
+            }
+        }
+
         return null;
     }
 
     /**
-     * 判断参数名是否可能是签名参数
-     * @param name {string} 参数名
-     * @returns {boolean} 如果参数名可能是签名参数则返回true，否则返回false
+     * 判断是否可能是签名名称
+     * @param name {string} 名称
+     * @returns {boolean} 是否可能是签名名称
      */
-    maybeSignName(name: string): boolean {
-        name = name.toLowerCase();
-        const signNameSet = new Set<string>();
-        signNameSet.add("sign");
-        signNameSet.add("_sign");
-        signNameSet.add("signature");
-        return signNameSet.has(name);
+    private maybeSignName(name: string): boolean {
+        const lowerName = name.toLowerCase();
+        return lowerName.includes('sign') || 
+               lowerName.includes('signature') || 
+               lowerName.includes('token') || 
+               lowerName.includes('auth');
     }
-
-    /**
-     * 分析响应上下文中的签名
-     * @param responseContext {ResponseContext} 响应上下文
-     */
-    analyzeResponse(responseContext: ResponseContext): void {
-
-    }
-
-}
-
-export {
-    SignAnalyzer
-}; 
+} 

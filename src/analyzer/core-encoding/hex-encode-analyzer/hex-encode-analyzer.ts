@@ -1,14 +1,12 @@
-import {UrlEncodeCodec} from "../../../codec/commons/url-encode-codec/url-encode-codec";
-import {HexCodec} from "../../../codec/commons/hex-codec/hex-codec";
-import {Base64Codec} from "../../../codec/commons/base64-codec/base64-codec";
-import {RequestContext} from "../../../context/request-context";
-import {ResponseContext} from "../../../context/response-context";
-import {Param} from "../../../context/param";
+import { RequestContext } from "../../../context/request-context";
+import { ResponseContext } from "../../../context/response-context";
+import { Param } from "../../../context/param";
+import { HexCodec } from "../../../codec/commons/hex-codec/hex-codec";
 
 /**
  * 十六进制编码分析器
  */
-class HexEncodeAnalyzer {
+export class HexEncodeAnalyzer {
 
     /**
      * 分析请求上下文中的十六进制编码
@@ -16,15 +14,21 @@ class HexEncodeAnalyzer {
      */
     static analyzeRequestContext(requestContext: RequestContext): void {
         // 请求参数
-        for (let param of requestContext.getParams()) {
+        for (const param of requestContext.getParams()) {
             this.analyzeParam(param);
         }
 
         // 请求体
-        if (!HexCodec.isHex(requestContext.bodyContext.getRawBodyPlain())) {
+        const rawBody = requestContext.bodyContext.getRawBodyPlain();
+        if (!rawBody || !HexCodec.isHex(rawBody)) {
             return;
         }
-        requestContext.bodyContext.rawBodyHexDecode = HexCodec.decode(requestContext.bodyContext.getRawBodyPlain());
+        const decodedBody = HexCodec.decode(rawBody);
+        if (decodedBody instanceof DataView) {
+            requestContext.bodyContext.rawBodyHexDecode = new TextDecoder().decode(decodedBody);
+        } else {
+            requestContext.bodyContext.rawBodyHexDecode = decodedBody;
+        }
         requestContext.bodyContext.isRawBodyHex = true;
     }
 
@@ -34,28 +38,34 @@ class HexEncodeAnalyzer {
      */
     static analyzeResponseContext(responseContext: ResponseContext): void {
         // 响应体
-        if (!HexCodec.isHex(responseContext.bodyContext.getRawBodyPlain())) {
+        const rawBody = responseContext.bodyContext.getRawBodyPlain();
+        if (!rawBody || !HexCodec.isHex(rawBody)) {
             return;
         }
-        responseContext.bodyContext.rawBodyHexDecode = HexCodec.decode(responseContext.bodyContext.getRawBodyPlain());
+        const decodedBody = HexCodec.decode(rawBody);
+        if (decodedBody instanceof DataView) {
+            responseContext.bodyContext.rawBodyHexDecode = new TextDecoder().decode(decodedBody);
+        } else {
+            responseContext.bodyContext.rawBodyHexDecode = decodedBody;
+        }
         responseContext.bodyContext.isRawBodyHex = true;
     }
 
     /**
      * 分析param并设置相关字段
-     *
      * @param param {Param} 参数对象
      */
     static analyzeParam(param: Param): void {
-        if (!HexCodec.isHex(param.getValuePlain())) {
+        const value = param.getValuePlain();
+        if (!value || !HexCodec.isHex(value)) {
             return;
         }
-        param.isValueHex = HexCodec.decode(param.getValuePlain());
-        param.valueHexDecode = true;
+        const decodedValue = HexCodec.decode(value);
+        if (decodedValue instanceof DataView) {
+            param.valueHexDecode = new TextDecoder().decode(decodedValue);
+        } else {
+            param.valueHexDecode = decodedValue;
+        }
+        param.isValueHex = true;
     }
-
-}
-
-export {
-    HexEncodeAnalyzer
-}; 
+} 

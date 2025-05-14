@@ -20,7 +20,7 @@ class Base64Codec {
             const reencoded = btoa(decoded);
             // 去除可能的填充字符'='后比较
             return str.replace(/=+$/, '') === reencoded.replace(/=+$/, '');
-        } catch (e) {
+        } catch (_e) {
             // 如果解码失败，返回false
             return false;
         }

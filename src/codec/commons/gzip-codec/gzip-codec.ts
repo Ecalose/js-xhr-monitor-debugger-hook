@@ -1,31 +1,31 @@
 import pako from 'pako';
 
 /**
- * 用来对gzip类型的数据解码
+ * Gzip 编解码器
  */
-class GzipCodec {
+export class GzipCodec {
 
     /**
-     * 解码gzip压缩的数据
-     * @param gzipData {Uint8Array} gzip压缩的数据
-     * @return {Uint8Array} 解压缩后的数据
+     * 检查数据是否是 gzip 压缩的
+     * @param data {Uint8Array} 要检查的数据
+     * @returns {boolean} 是否是 gzip 压缩的数据
      */
-    static decode(gzipData: Uint8Array): Uint8Array {
-        return pako.inflate(gzipData);
+    static isGzipCompressed(data: Uint8Array): boolean {
+        // Gzip 魔数是 1f 8b
+        return data.length > 2 && data[0] === 0x1f && data[1] === 0x8b;
     }
 
     /**
-     * 判断数据是否是gzip压缩的
-     * @param uint8Array {Uint8Array} 要检查的数据
-     * @return {boolean} 如果是gzip压缩的数据返回true，否则返回false
+     * 解码 gzip 压缩的数据
+     * @param data {Uint8Array} 要解码的数据
+     * @returns {Uint8Array} 解码后的数据
      */
-    static isGzipCompressed(uint8Array: Uint8Array): boolean {
-        // 检查前两个字节是否是 Gzip 文件头
-        return uint8Array.length >= 2 && uint8Array[0] === 0x1F && uint8Array[1] === 0x8B;
+    static decode(data: Uint8Array): Uint8Array {
+        try {
+            return pako.inflate(data);
+        } catch (e) {
+            console.error('Error decompressing gzip data:', e);
+            return data;
+        }
     }
-
 }
-
-export {
-    GzipCodec
-};

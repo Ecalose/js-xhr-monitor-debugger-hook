@@ -73,7 +73,7 @@ class HexCodec {
                 result += bytes[i].toString(16).padStart(2, '0');
             }
             return result;
-        } catch (e) {
+        } catch (_e) {
             return null;
         }
     }

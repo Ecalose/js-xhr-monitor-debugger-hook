@@ -9,44 +9,55 @@ import { Base64Codec } from "../../../codec/commons/base64-codec/base64-codec";
 export class Base64Analyzer {
     /**
      * 分析请求上下文中的Base64编码
-     * @param requestContext 请求上下文
+     * @param requestContext {RequestContext} 请求上下文
      */
     static analyzeRequestContext(requestContext: RequestContext): void {
-        // 请求参数
-        for (let param of requestContext.getParams()) {
-            this.analyzeParam(param);
-        }
-
-        // 请求体
-        if (!Base64Codec.isBase64(requestContext.bodyContext.getRawBodyPlain())) {
+        if (!requestContext.bodyContext) {
             return;
         }
-        requestContext.bodyContext.rawBodyBase64Decode = Base64Codec.decode(requestContext.bodyContext.getRawBodyPlain());
+
+        const rawBody = requestContext.bodyContext.getRawBodyPlain();
+        if (!rawBody || !Base64Codec.isBase64(rawBody)) {
+            return;
+        }
+
         requestContext.bodyContext.isRawBodyBase64 = true;
+        requestContext.bodyContext.rawBodyBase64Decode = Base64Codec.decode(rawBody);
     }
 
     /**
      * 分析响应上下文中的Base64编码
-     * @param responseContext 响应上下文
+     * @param responseContext {ResponseContext} 响应上下文
      */
     static analyzeResponseContext(responseContext: ResponseContext): void {
-        // 响应体
-        if (!Base64Codec.isBase64(responseContext.bodyContext.getRawBodyPlain())) {
+        if (!responseContext.bodyContext) {
             return;
         }
-        responseContext.bodyContext.rawBodyBase64Decode = Base64Codec.decode(responseContext.bodyContext.getRawBodyPlain());
+
+        const rawBody = responseContext.bodyContext.getRawBodyPlain();
+        if (!rawBody || !Base64Codec.isBase64(rawBody)) {
+            return;
+        }
+
         responseContext.bodyContext.isRawBodyBase64 = true;
+        responseContext.bodyContext.rawBodyBase64Decode = Base64Codec.decode(rawBody);
     }
 
     /**
-     * 分析param并设置相关字段
-     * @param param 参数对象
+     * 分析参数中的Base64编码
+     * @param param {Param} 参数
      */
     static analyzeParam(param: Param): void {
-        if (!Base64Codec.isBase64(param.getValuePlain())) {
+        if (!param.value) {
             return;
         }
-        param.valueBase64Decode = Base64Codec.decode(param.getValuePlain());
+
+        const value = param.getValuePlain();
+        if (!value || !Base64Codec.isBase64(value)) {
+            return;
+        }
+
+        param.valueBase64Decode = Base64Codec.decode(value);
         param.isValueBase64 = true;
     }
 } 
