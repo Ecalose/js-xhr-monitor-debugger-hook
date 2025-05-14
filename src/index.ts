@@ -63,8 +63,10 @@ export const defaultDebugger = new Debugger(defaultConfig);
 // 导出所有需要的类和函数
 export { Debugger, DebuggerConfig } from './debuggers/debugger';
 export { XhrContext } from './context/xhr-context';
+export { FetchContext } from './context/fetch-context';
 export { XMLHttpRequestPrototypeHook } from './hook/xhr/xml-http-request-prototype-hook';
 export { XMLHttpRequestObjectHook } from './hook/xhr/xml-http-request-object-hook';
+export { FetchHook, addFetchHook } from './hook/fetch';
 export { IDGenerator } from './debuggers/id-generator';
 export { Logger } from './logger';
 

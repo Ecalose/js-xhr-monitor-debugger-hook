@@ -29,6 +29,8 @@
     "webpack-merge": "^5.9.0"
   },
   "dependencies": {
-    "pako": "^2.1.0"
+    "@types/uuid": "^10.0.0",
+    "pako": "^2.1.0",
+    "uuid": "^11.1.0"
   }
 }
